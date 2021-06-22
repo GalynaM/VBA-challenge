@@ -16,45 +16,46 @@ Sub Analyze_All_Stocks()
     Dim max_incr As Double
     Dim max_total As Double
     
-    'Initialize variables
-    lastRow = Cells(Rows.Count, 1).End(xlUp).Row
-    row_result_table = 2
-    
-    'Create headers for the final table
-    Range("J1").Value = "Ticker"
-    Range("K1").Value = "Yearly Change"
-    Range("L1").Value = "Percent Change"
-    Range("M1").Value = "Total Stock Volume"
-    
-    'Loop through all the stocks and get needed data
-    'For Each currentWS In Worksheets
+    'Loop through all the worksheets
+    For Each currentWS In Worksheets
         
+        'Initialize variables
+        lastRow = currentWS.Cells(Rows.Count, 1).End(xlUp).Row
+        row_result_table = 2
+    
+        'Create headers for the final table
+        currentWS.Range("J1").Value = "Ticker"
+        currentWS.Range("K1").Value = "Yearly Change"
+        currentWS.Range("L1").Value = "Percent Change"
+        currentWS.Range("M1").Value = "Total Stock Volume"
+        
+        'Loop through all the stocks and get needed data
         For i = 2 To lastRow
             
-            If Cells(i, 1).Value <> Cells(i + 1, 1).Value Then
+            If currentWS.Cells(i, 1).Value <> currentWS.Cells(i + 1, 1).Value Then
             
                 'Get the ticker value
-                ticker = Cells(i, 1).Value
-                Range("J" & row_result_table).Value = ticker
+                ticker = currentWS.Cells(i, 1).Value
+                currentWS.Range("J" & row_result_table).Value = ticker
                 
                 'Get the Yearly Change and format cells accordingly
-                yearly_change = Cells(i, 6) - Cells(i - row_counter, 3)
-                Range("K" & row_result_table).Value = yearly_change
+                yearly_change = currentWS.Cells(i, 6) - currentWS.Cells(i - row_counter, 3)
+                currentWS.Range("K" & row_result_table).Value = yearly_change
                 If yearly_change > 0 Then
-                    Range("K" & row_result_table).Interior.ColorIndex = 4
-                    Else: Range("K" & row_result_table).Interior.ColorIndex = 3
+                    currentWS.Range("K" & row_result_table).Interior.ColorIndex = 4
+                    Else: currentWS.Range("K" & row_result_table).Interior.ColorIndex = 3
                 End If
                 
                 'Calculate the Percent Change, make sure th    0
-                If Cells(i - row_counter, 3) <> 0 Then
-                    percent_change = WorksheetFunction.Round(yearly_change / Cells(i - row_counter, 3), 4)
-                    Range("L" & row_result_table).Value = percent_change
-                    Else: Range("L" & row_result_table).Value = "N/A"
+                If currentWS.Cells(i - row_counter, 3) <> 0 Then
+                    percent_change = WorksheetFunction.Round(yearly_change / currentWS.Cells(i - row_counter, 3), 4)
+                    currentWS.Range("L" & row_result_table).Value = percent_change
+                    Else: currentWS.Range("L" & row_result_table).Value = "N/A"
                 End If
                 
                 'Calculate the Total Stock Value
-                total_stock = total_stock + CDbl(Cells(i, 7))
-                Range("M" & row_result_table).Value = total_stock
+                total_stock = total_stock + CDbl(currentWS.Cells(i, 7))
+                currentWS.Range("M" & row_result_table).Value = total_stock
                 
                 'Set row_counter to 0
                 row_counter = 0
@@ -71,7 +72,7 @@ Sub Analyze_All_Stocks()
                 row_counter = row_counter + 1
                 
                 'Calculate total stock
-                total_stock = total_stock + CDbl(Cells(i, 7))
+                total_stock = total_stock + CDbl(currentWS.Cells(i, 7))
                 
             End If
             
@@ -89,55 +90,56 @@ Sub Analyze_All_Stocks()
         Dim max_total_row As Integer
     
         'Set initial max values
-        max_decr = CDbl(Range("L2").Value)
-        max_incr = CDbl(Range("L2").Value)
-        max_total = CDbl(Range("M2").Value)
+        max_decr = CDbl(currentWS.Range("L2").Value)
+        max_incr = CDbl(currentWS.Range("L2").Value)
+        max_total = CDbl(currentWS.Range("M2").Value)
         
         'Create headers for the final table
-        Range("O2").Value = "Greatest % Increase"
-        Range("O3").Value = "Greatest % Decrease"
-        Range("O4").Value = "Greatest Total Volume"
-        Range("P1").Value = "Ticker"
-        Range("Q1").Value = "Value"
-        Range("M1").Value = "Total Stock Volume"
+        currentWS.Range("O2").Value = "Greatest % Increase"
+        currentWS.Range("O3").Value = "Greatest % Decrease"
+        currentWS.Range("O4").Value = "Greatest Total Volume"
+        currentWS.Range("P1").Value = "Ticker"
+        currentWS.Range("Q1").Value = "Value"
+        currentWS.Range("M1").Value = "Total Stock Volume"
               
         'Loop through result table
         For i = 2 To row_result_table
       
             'Find Greatest % Increase
-            If Cells(i, 12).Value <> "N/A" And Cells(i, 12).Value > max_incr Then
-                max_incr = Cells(i, 12).Value
+            If currentWS.Cells(i, 12).Value <> "N/A" And currentWS.Cells(i, 12).Value > max_incr Then
+                max_incr = currentWS.Cells(i, 12).Value
                 max_incr_row = i
             End If
             
             'Find Greatest % Decrease
-            If Cells(i, 12).Value <> "N/A" And Cells(i, 12).Value < max_decr Then
-                max_decr = Cells(i, 12).Value
+            If currentWS.Cells(i, 12).Value <> "N/A" And currentWS.Cells(i, 12).Value < max_decr Then
+                max_decr = currentWS.Cells(i, 12).Value
                 max_decr_row = i
             End If
             
             'Find Greatest Total Volume
-            If Cells(i, 13).Value > max_total Then
-                max_total = Cells(i, 13).Value
+            If currentWS.Cells(i, 13).Value > max_total Then
+                max_total = currentWS.Cells(i, 13).Value
                 max_total_row = i
             End If
             
         Next i
         
-        Range("P2").Value = Range("J" & max_incr_row).Value
-        Range("P3").Value = Range("J" & max_decr_row).Value
-        Range("P4").Value = Range("J" & max_total_row).Value
+        'Fill the table for greatest values
+        currentWS.Range("P2").Value = currentWS.Range("J" & max_incr_row).Value
+        currentWS.Range("P3").Value = currentWS.Range("J" & max_decr_row).Value
+        currentWS.Range("P4").Value = currentWS.Range("J" & max_total_row).Value
         
-        Range("Q2").Value = max_incr
-        Range("Q3").Value = max_decr
-        Range("Q4").Value = max_total
+        currentWS.Range("Q2").Value = max_incr
+        currentWS.Range("Q3").Value = max_decr
+        currentWS.Range("Q4").Value = max_total
                 
         'Format columns
-        Range("L2:L" & row_result_table).NumberFormat = "0.00%"
-        Range("Q2:Q3").NumberFormat = "0.00%"
-        Columns("J:M").AutoFit
-        Columns("O:Q").AutoFit
-        
-        
-   ' Next current
+        currentWS.Range("L2:L" & row_result_table).NumberFormat = "0.00%"
+        currentWS.Range("Q2:Q3").NumberFormat = "0.00%"
+        currentWS.Columns("J:M").AutoFit
+        currentWS.Columns("O:Q").AutoFit
+              
+   Next currentWS
+   
 End Sub
